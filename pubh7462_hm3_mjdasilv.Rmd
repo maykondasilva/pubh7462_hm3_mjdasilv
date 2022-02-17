@@ -63,11 +63,12 @@ instacart.summary <- instacart.df %>%
     across(
       contains(c("pct.reo", "n.", "order.", "days.")),
                list(mean = mean, median = median, sd = sd),
-              .names = "{.col}_{.fn}")) %>%
+               .names = "{.col}_{.fn}")) %>%
   ungroup()
 ```
 
 ```{r, echo = TRUE, warning = FALSE, error = FALSE, message = FALSE, results = FALSE}
+# Creating the gt summary table from the summary statistics above
 gt_summary_3.1 <- instacart.summary %>%
   pivot_longer(cols      = 1:18,
                names_to  = "variable",
@@ -77,9 +78,9 @@ gt_summary_3.1 <- instacart.summary %>%
               values_from = "value") %>%
   mutate(across(where(is.numeric), round, 2)) %>%
   rename(Variable = variable, 
-         Mean = mean, 
-         Median = median, 
-         S.D. = sd) %>%
+         Mean     = mean, 
+         Median   = median, 
+         S.D.     = sd) %>%
   mutate(Variable = recode(Variable, 
                                    pct.reordered    = "Percent of Items Reordered",
                                    days.last.order  = "No. of Days Since Last Order",
@@ -120,8 +121,8 @@ ggplot(plot_3.2, aes(x = Aisle, y = No.Orders, fill = Aisle)) +
   scale_colour_viridis_d("Aisle") +
   labs(title = "Number of Orders per Aisle for the Instacart 2017 Dataset",
        y     = "No. Of Orders") +
-  theme(axis.text.x = element_text(size  = 6, hjust = 0.5),
-        axis.text.y = element_text(size  = 5, hjust = 1),
+  theme(axis.text.x     = element_text(size  = 6, hjust = 0.5),
+        axis.text.y     = element_text(size  = 5, hjust = 1),
         legend.position = "none") +
   geom_text(aes(label = No.Orders), size = 1.5, hjust = -0.1) +
   scale_x_discrete(expand = c(0,0)) +
@@ -155,7 +156,7 @@ top6_aisles <- instacart.df %>%
   mutate(department = str_to_title(department) %>%
          as.factor() %>%
          fct_reorder(count_aisle, .desc = TRUE),
-         aisle = str_to_title(aisle) %>%
+         aisle      = str_to_title(aisle) %>%
          as.factor() %>%
          fct_reorder2(department, count_aisle, .desc = TRUE))
  
@@ -177,7 +178,7 @@ top6_aisles %>%
 
 ## 3.4 What are the top 5 aisles by items purchased and what are the top 5 items purchased in each of those aisles?
 
-```{r, echo = TRUE, warning = FALSE, error = FALSE, message = FALSE}
+```{r, echo = TRUE, warning = FALSE, error = FALSE, message = FALSE, results = FALSE}
 # Top 5 Aisles by items purchased
 top5_aisles <- instacart.df %>%
   group_by(aisle) %>%
@@ -207,8 +208,7 @@ top5_items <- instacart.df %>%
   data_color(columns = "No. Items Purchased",
     colors = scales::col_numeric(
       palette = c("white", "red"),
-      domain  = c(0, 19000))) %>%
-  as_raw_html()
-
-top5_items
+      domain  = c(0, 19000)))
 ```
+
+![](./figures/gt_top5_items.png)
